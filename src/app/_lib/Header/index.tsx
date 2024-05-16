@@ -9,19 +9,20 @@ export const Header = () => {
     child: any;
   };
   const menuItems = [
-    // {
-    //   label: "Playground",
-    //   url: "",
-    //   child: [{ label: "Object Writing", url: "/" }],
-    // },
+    {
+      label: "Home",
+      url: "/",
+      child: []
+      // child: [{ label: "Object Writing", url: "/" }],
+    },
     {
       label: "About",
-      url: "/about",
+      url: "/",
       child: null,
     },
     {
       label: "Support",
-      url: "/support",
+      url: "/",
       child: null,
     },
   ];
@@ -29,7 +30,7 @@ export const Header = () => {
   return (
     <div className="w-full py-2 shadow-md dark:shadow-[rgba(255,255,255,0.1)]">
       <div className="max-w-[1080px] flex justify-between items-center text-[black] mx-auto">
-        <div className="text-[16px] font-jakarta-sans">
+        <Link href="/" className="text-[16px] font-jakarta-sans">
           <Image
             src="/logo.png"
             alt="logo"
@@ -37,7 +38,7 @@ export const Header = () => {
             height={100}
             className="dark:invert"
           />
-        </div>
+        </Link>
         <div className="flex items-center">
           <div className="flex mr-4">
             {menuItems.map((item: menuItem) => {

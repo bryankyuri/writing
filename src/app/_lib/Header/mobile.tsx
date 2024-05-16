@@ -20,17 +20,17 @@ export const HeaderMobile = () => {
 
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const menuItems = [
-    // {
-    //   label: "Playground",
-    //   url: "/playground",
-    // },
+    {
+      label: "Home",
+      url: "/",
+    },
     {
       label: "About",
-      url: "/about",
+      url: "/",
     },
     {
       label: "Support",
-      url: "/support",
+      url: "/",
     },
   ];
 
@@ -47,14 +47,15 @@ export const HeaderMobile = () => {
         >
           <GiHamburgerMenu />
         </button>
-
-        <Image
-          src="/logo.png"
-          alt="logo"
-          width={60}
-          height={60}
-          className="dark:invert"
-        />
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={60}
+            height={60}
+            className="dark:invert"
+          />
+        </Link>
 
         <ThemeSwitch />
       </div>
