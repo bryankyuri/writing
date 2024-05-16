@@ -252,7 +252,7 @@ export default function Home() {
       <div
         className={`flex w-full ${
           isDesktop
-            ? "h-[400px] max-w-[1080px] items-center mt-[24px] mb-[24px]"
+            ? "h-[435px] max-w-[1080px] items-center mt-[24px] mb-[24px]"
             : "flex-col mt-[12px] mb-[12px]"
         } `}
       >
