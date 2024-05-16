@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 
+html {
+  font-family: "Helvetica Neue" !important;
+  padding: 0px !important;
+}
+
 *{
   outline: none !important;
 }
