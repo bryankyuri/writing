@@ -49,11 +49,12 @@ export const HeaderMobile = () => {
         </button>
         <Link href="/">
           <Image
-            src="/logo.png"
+            src="/logo-esc.png"
             alt="logo"
             width={60}
             height={60}
             className="dark:invert"
+            priority
           />
         </Link>
 
@@ -70,7 +71,7 @@ export const HeaderMobile = () => {
           >
             <div className="flex px-6 items-center justify-between">
               <Image
-                src="/logo.png"
+                src="/logo-esc.png"
                 alt="logo"
                 width={100}
                 height={100}

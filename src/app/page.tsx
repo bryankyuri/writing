@@ -69,7 +69,6 @@ export default function Home() {
     const difDay = differenceInDays(today, firstday);
     const arrayId = dataKBBI();
     const arrayEn = dataEN();
-    console.log(difDay)
     setWodId(arrayId[difDay]);
     setWodEn(arrayEn[difDay]);
     setRandomId(generateRandom(arrayId));

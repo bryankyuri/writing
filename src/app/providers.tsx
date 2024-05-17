@@ -33,11 +33,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
             exit="exit"
           >
             <Image
-              src={"/logo.png"}
+              src={"/logo-esc.png"}
               alt=""
               width={150}
               height={150}
               className="mb-4 dark:invert"
+              priority
             />
             <span className="text-[16px]">Loading...</span>
           </motion.div>

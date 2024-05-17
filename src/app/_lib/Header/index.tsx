@@ -32,11 +32,12 @@ export const Header = () => {
       <div className="max-w-[1080px] flex justify-between items-center text-[black] mx-auto">
         <Link href="/" className="text-[16px] font-jakarta-sans">
           <Image
-            src="/logo.png"
+            src="/logo-esc.png"
             alt="logo"
             width={100}
             height={100}
             className="dark:invert"
+            priority
           />
         </Link>
         <div className="flex items-center">
