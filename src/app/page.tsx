@@ -50,10 +50,10 @@ export default function Home() {
     return array;
   };
 
-  const generateRandom = (array: string[]) => {
+  const generateRandom = useCallback((array: string[]) => {
     const shuffledArray = shuffle(array);
     return shuffledArray[0];
-  };
+  }, []);
 
   const generateNew = () => {
     if (language === "Indonesian") {
@@ -66,15 +66,16 @@ export default function Home() {
   useEffect(() => {
     const firstday = new Date("2024-05-16");
     const today = new Date(format(new Date(), "yyyy-MM-dd"));
-    const difDay = differenceInDays(firstday, today);
+    const difDay = differenceInDays(today, firstday);
     const arrayId = dataKBBI();
     const arrayEn = dataEN();
+    console.log(difDay)
     setWodId(arrayId[difDay]);
     setWodEn(arrayEn[difDay]);
     setRandomId(generateRandom(arrayId));
     setRandomEn(generateRandom(arrayEn));
     setShowModalInstruction(false);
-  }, []);
+  }, [generateRandom]);
 
   const startHandler = () => {
     setDuration(parseInt(START_SECOND, 10) + 60 * parseInt(START_MINUTES, 10));
