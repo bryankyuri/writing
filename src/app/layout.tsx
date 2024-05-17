@@ -17,7 +17,7 @@ const jakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Object Writing",
+  title: "ESC - Object Writing",
   description: "Test Development",
 };
 

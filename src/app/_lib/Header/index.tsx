@@ -6,15 +6,8 @@ export const Header = () => {
   type menuItem = {
     label: string;
     url: string;
-    child: any;
   };
   const menuItems = [
-    {
-      label: "Home",
-      url: "/",
-      child: []
-      // child: [{ label: "Object Writing", url: "/" }],
-    },
     {
       label: "About",
       url: "/",
@@ -45,19 +38,13 @@ export const Header = () => {
             {menuItems.map((item: menuItem) => {
               return (
                 <>
-                  {item.child ? (
-                    <div className="mx-4 dark:text-white">{item.label}</div>
-                  ) : (
-                    <>
-                      <Link
-                        key={item.url}
-                        href={item.url}
-                        className="mx-4 dark:text-white"
-                      >
-                        {item.label}
-                      </Link>
-                    </>
-                  )}
+                  <Link
+                    key={item.url}
+                    href={item.url}
+                    className="mx-4 dark:text-white"
+                  >
+                    {item.label}
+                  </Link>
                 </>
               );
             })}

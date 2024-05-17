@@ -21,10 +21,6 @@ export const HeaderMobile = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const menuItems = [
     {
-      label: "Home",
-      url: "/",
-    },
-    {
       label: "About",
       url: "/",
     },
