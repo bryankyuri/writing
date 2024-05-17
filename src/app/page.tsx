@@ -339,9 +339,9 @@ export default function Home() {
                   }`}
                 >
                   {language === "Indonesian" ? (
-                    "Find Dictionary"
+                    "Find it in dictionary"
                   ) : (
-                    <>Find Dictionary</>
+                    <>Find it in dictionary</>
                   )}
                 </div>
                 <GoArrowUpRight className="ml-1" />
