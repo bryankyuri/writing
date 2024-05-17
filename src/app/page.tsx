@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { IoIosArrowDropdown, IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useCallback, useContext, useEffect, useState } from "react";
