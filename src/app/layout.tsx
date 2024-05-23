@@ -18,7 +18,7 @@ const jakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "ESC - Object Writing",
-  description: "Test Development",
+  description: "Earhouse Songwriting Club",
 };
 
 export default function RootLayout({
