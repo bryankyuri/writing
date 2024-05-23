@@ -35,8 +35,10 @@ export default function Home() {
   const [wodEn, setWodEn] = useState("");
   const [randomId, setRandomId] = useState("");
   const [randomEn, setRandomEn] = useState("");
+  const [infoType, setInfoType] = useState(1);
 
   const [showModalInstruction, setShowModalInstruction] = useState(false);
+  const [showModalCredits, setShowModalCredits] = useState(false);
 
   const { screenWidth } = useContext(AppContext);
   const isDesktop = screenWidth > 1080;
@@ -245,6 +247,19 @@ export default function Home() {
               Instruction
             </div>
           </button>
+          <button
+            className="flex items-center mt-6 mb-2 text-[12px] font-bold"
+            onClick={() => {
+              setShowModalCredits(true);
+            }}
+          >
+            <div className="w-[24px] h-[24px] mr-2 ml-8 flex justify-center items-center rounded-full font-bold bg-[#ffc778] dark:text-black">
+              C
+            </div>
+            <div className="border-b-2 border-black pb-1 dark:border-white">
+              Credits
+            </div>
+          </button>
         </div>
       )}
 
@@ -451,26 +466,67 @@ export default function Home() {
       </div>
       {isDesktop && (
         <div className="w-full shadow-sm max-w-[1080px] bg-[#fff0da] dark:bg-[#000] mb-[24px] py-8 px-8 text-[14px] rounded-lg text-justify dark:shadow-[#c2c2c210]">
-          <div className="flex mb-6 items-center">
-            <div className="w-[32px] h-[32px] mr-2 flex text-[20px] justify-center items-center rounded-full bg-[#ffc778] dark:text-black">
-              <GrInfo className="ml-[2px]" strokeWidth={4} />
-            </div>
-            <div className="border-b-2 border-black pb-1 font-bold dark:border-white">
-              Instruction
-            </div>
+          <div className="flex">
+            <button
+              className="flex mb-6 items-center"
+              onClick={() => setInfoType(1)}
+            >
+              <div className="w-[32px] h-[32px] mr-2 flex text-[20px] justify-center items-center rounded-full bg-[#ffc778] dark:text-black">
+                <GrInfo className="ml-[2px]" strokeWidth={4} />
+              </div>
+              <div
+                className={`${
+                  infoType === 1 ? "border-b-2" : ""
+                } border-black pb-1 font-bold dark:border-white`}
+              >
+                Instruction
+              </div>
+            </button>
+            <button
+              className="flex mb-6 items-center ml-8"
+              onClick={() => setInfoType(2)}
+            >
+              <div className="w-[32px] h-[32px] mr-2 flex text-[20px] font-bold justify-center items-center rounded-full bg-[#ffc778] dark:text-black">
+                C
+              </div>
+              <div
+                className={`${
+                  infoType === 2 ? "border-b-2" : ""
+                } border-black pb-1 font-bold dark:border-white`}
+              >
+                Credits
+              </div>
+            </button>
           </div>
-          {` Set a timer for 10 minutes and free-write based on the
-        prompt until the timer finishes. Use all "seven senses": the five conventional ones
-        (sight, touch, hearing, smell, taste), along with organic sense
-        (awareness of your body) and kinesthetic sense (awareness of movement
-          and your spatial relation to the outside word).`}
-          <br />
-          <br />
-          {`According to the book
-          Writing Better Lyrics by Pat Pattison, you should stop writing the
-          moment the timer goes off. The best time to do the writing exercise is
-          first thing each morning so that your mind is primed to think and
-          observe with a writer's perspective throughout the day.`}
+          {infoType === 1 ? (
+            <div className="italic leading-6">
+              {`Atur pengingat waktu selama 10 menit dan lakukan "free-writing" berdasarkan
+            "Word of The Day" atau "Random Word Generator" sampai waktu habis. Gunakan ketujuh indra :
+            lima indra biasa (penglihatan, perabaan, pendengaran, penciuman, pengecapan),
+            ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
+            (kesadaran gerakan dan hubungan spasial Anda dengan dunia luar).`}
+              <br />
+              <br />
+              <div className="w-full border-b-2 border-black border-dashed dark:border-white "></div>
+              <br />
+              {`Set a timer for 10 minutes and free-write based on the
+            prompt until the timer finishes. Use all "seven senses": the five conventional ones
+            (sight, touch, hearing, smell, taste), along with organic sense
+            (awareness of your body) and kinesthetic sense (awareness of movement
+              and your spatial relation to the outside word).`}
+            </div>
+          ) : (
+            <div className="italic leading-6">
+              {`Website yang kami buat dengan bangga terinspirasi dari buku "Writing Better Lyrics" karya Pat Pattison dan situs objectwriting.com, menghadirkan platform untuk berlatih menulis penulisan kreatif.
+`}
+              <br />
+              <br />
+              <div className="w-full border-b-2 border-black border-dashed dark:border-white"></div>
+              <br />
+              {`
+Our website is proudly inspired by Pat Pattison's book "Writing Better Lyrics" and the site objectwriting.com, providing a platform for practicing creative writing.`}
+            </div>
+          )}
         </div>
       )}
       <AnimatePresence>
@@ -501,19 +557,61 @@ export default function Home() {
                   <IoCloseOutline />
                 </button>
               </div>
-
-              {` Set a timer for 10 minutes and free-write based on the
-        prompt until the timer finishes. Use all "seven senses": the five conventional ones
+              <div className="italic leading-6">
+                {`Atur pengingat waktu selama 10 menit dan lakukan "free-writing" berdasarkan
+"Word of The Day" atau "Random Word Generator" sampai waktu habis. Gunakan ketujuh indra :
+lima indra biasa (penglihatan, perabaan, pendengaran, penciuman, pengecapan),
+ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
+(kesadaran gerakan dan hubungan spasial Anda dengan dunia luar).`}
+                <br />
+                <br />
+                <div className="w-full border-b-2 border-black border-dashed dark:border-white"></div>
+                <br />
+                {`Set a timer for 10 minutes and free-write based on the
+        "Word of The Day" or "Random Word Generator" until the timer finishes. Use all "seven senses": the five conventional ones
         (sight, touch, hearing, smell, taste), along with organic sense
         (awareness of your body) and kinesthetic sense (awareness of movement
           and your spatial relation to the outside word).`}
-              <br />
-              <br />
-              {`According to the book
-          Writing Better Lyrics by Pat Pattison, you should stop writing the
-          moment the timer goes off. The best time to do the writing exercise is
-          first thing each morning so that your mind is primed to think and
-          observe with a writer's perspective throughout the day.`}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {!isDesktop && showModalCredits && (
+          <motion.div
+            variants={varFadeInOutFullMobile}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="w-full p-8 h-screen fixed top-0 left-0 bg-[#000000b0] dark:bg-[#19191970] flex justify-center items-center"
+          >
+            <div className="w-full shadow-lg px-6 py-8 bg-[#fff0da] dark:bg-black dark:text-white rounded-xl text-[12px] leading-[20px] text-justify dark:shadow-[#c2c2c240]">
+              <div className="flex w-full items-center justify-between  mb-6">
+                <div className="flex">
+                  <div className="w-[24px] h-[24px] mr-2 font-bold flex justify-center items-center rounded-full bg-[#ffc778] dark:text-black">
+                    C
+                  </div>
+                  <div className="border-b-2 border-black pb-1underline pb-1 font-bold dark:border-white">
+                    Credits
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowModalCredits(false);
+                  }}
+                  className="text-[32px]"
+                >
+                  <IoCloseOutline />
+                </button>
+              </div>
+              <div className="italic leading-6">
+                {`Website yang kami buat dengan bangga terinspirasi dari buku "Writing Better Lyrics" karya Pat Pattison dan situs objectwriting.com, menghadirkan platform untuk berlatih menulis penulisan kreatif.`}
+                <br />
+                <br />
+                <div className="w-full border-b-2 border-black border-dashed dark:border-white"></div>
+                <br />
+                {`Our website is proudly inspired by Pat Pattison's book "Writing Better Lyrics" and the site objectwriting.com, providing a platform for practicing creative writing.`}
+              </div>
             </div>
           </motion.div>
         )}

@@ -5,6 +5,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
+import { FaInstagram } from "react-icons/fa";
+import { PiLinktreeLogoBold } from "react-icons/pi";
 
 const varFadeInOutMobile = {
   hidden: { opacity: 0, y: "300px" },
@@ -22,10 +24,6 @@ export const HeaderMobile = () => {
   const menuItems = [
     {
       label: "About",
-      url: "/",
-    },
-    {
-      label: "Support",
       url: "/",
     },
   ];
@@ -63,7 +61,7 @@ export const HeaderMobile = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="w-screen h-screen bg-[#fceba5] fixed left-0 top-0 z-10 pb-8 pt-2 dark:bg-black"
+            className="w-screen h-screen bg-[#fceba5] fixed left-0 top-0 z-10 pb-8 pt-2 dark:bg-black overflow-y-auto"
           >
             <div className="flex px-6 items-center justify-between">
               <Image
@@ -81,17 +79,55 @@ export const HeaderMobile = () => {
               </button>
             </div>
             <div className="flex flex-col my-8 px-6">
-              {menuItems.map((item: menuItem) => {
+              {/* {menuItems.map((item: menuItem) => {
                 return (
-                  <Link
+                  <div
                     key={item.url}
                     href={item.url}
                     className=" mb-6 dark:text-white"
                   >
                     {item.label}
-                  </Link>
+                  </div>
                 );
-              })}
+              })} */}
+              <div className="font-medium text-[32px]">
+                About Earhouse Songwriting Club
+              </div>
+              <div className="mt-8 mb-8 leading-6">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Exercitationem aliquam corrupti distinctio consectetur, dolor
+                laudantium deserunt temporibus, quia numquam sequi alias ratione
+                dolores! Ad earum perspiciatis nam cum eum cumque! Lorem ipsum
+                dolor sit amet consectetur, adipisicing elit. Nulla ratione
+                debitis consectetur fuga, cum laudantium omnis quisquam dolorem
+                nobis voluptatibus neque quam minima illo aliquid officia
+                excepturi quaerat at! Praesentium. asds
+              </div>
+
+              <div className="flex flex-col">
+                <Link
+                  href="https://www.instagram.com/earhousesongwritingclub/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center my-2"
+                >
+                  <div className="mr-2 rounded-full w-[24px] h-[24px] bg-black dark:bg-white dark:text-black flex justify-center items-center text-white">
+                    <FaInstagram />
+                  </div>{" "}
+                  <div className="underline">earhousesongwritingclub</div>
+                </Link>
+                <Link
+                  href="https://linktr.ee/earhouse"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center my-2"
+                >
+                  <div className="mr-2 rounded-full w-[24px] h-[24px] bg-black dark:bg-white dark:text-black flex justify-center items-center text-white">
+                    <PiLinktreeLogoBold />
+                  </div>
+                  <div className="underline">linktr.ee/earhouse</div>
+                </Link>
+              </div>
             </div>
           </motion.div>
         )}
