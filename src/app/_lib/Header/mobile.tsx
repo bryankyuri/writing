@@ -94,14 +94,13 @@ export const HeaderMobile = () => {
                 About Earhouse Songwriting Club
               </div>
               <div className="mt-8 mb-8 leading-6">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Exercitationem aliquam corrupti distinctio consectetur, dolor
-                laudantium deserunt temporibus, quia numquam sequi alias ratione
-                dolores! Ad earum perspiciatis nam cum eum cumque! Lorem ipsum
-                dolor sit amet consectetur, adipisicing elit. Nulla ratione
-                debitis consectetur fuga, cum laudantium omnis quisquam dolorem
-                nobis voluptatibus neque quam minima illo aliquid officia
-                excepturi quaerat at! Praesentium. asds
+                Earhouse Songwriting Club (ESC) merupakan sebuah komunitas yang
+                terbentuk sejak 2014. Diprakasai oleh duo Endah N Rhesa.
+                Bertujuan untuk mengumpulkan dan mewadahi orang-orang yang
+                tertarik berkreasi, khususnya dalam bidang menulis lagu. <br />
+                <br />
+                ESC dibentuk agar teman-teman semuua bisa terwadahi untuk saling
+                bertukar pikiran dan saling belajar satu sama lain.
               </div>
 
               <div className="flex flex-col">
