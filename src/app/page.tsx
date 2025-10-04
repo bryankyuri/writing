@@ -6,13 +6,70 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { LuAlarmClock } from "react-icons/lu";
 import { AppContext } from "./_lib/Context/appContext";
 import { GrInfo } from "react-icons/gr";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { IoCloseOutline, IoSearch } from "react-icons/io5";
 import { format, differenceInDays } from "date-fns";
 import { dataKBBI } from "@/app/_lib/model/arrayKBBI";
 import { dataEN } from "@/app/_lib/model/arrayEN";
 import { GoArrowUpRight } from "react-icons/go";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
+
+// KBBI API Interfaces
+interface KbbiMeaning {
+  id: number;
+  kbbi_entry_id: number;
+  kelas:
+    | string
+    | Array<{
+        kode: string;
+        nama: string;
+        deskripsi: string;
+      }>;
+  submakna: string | string[];
+  info: string;
+  contoh: string | string[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface KbbiEntry {
+  id: number;
+  lema: string;
+  kata_dasar: string[];
+  bentuk_tidak_baku: string[];
+  varian: string[];
+  etimologi: string;
+  meanings: KbbiMeaning[];
+  kata_turunan: string[];
+  gabungan_kata: string[];
+  peribahasa: string[];
+  idiom: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface KbbiApiResponse {
+  status: "success" | "error";
+  data: KbbiEntry[];
+  error?: boolean;
+  message?: string;
+}
+
+// Helper function to safely parse JSON arrays
+const parseJsonArray = (field: string | string[]): string[] => {
+  if (Array.isArray(field)) {
+    return field;
+  }
+  if (typeof field === "string") {
+    try {
+      const parsed = JSON.parse(field);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
 
 const varFadeInOutFullMobile = {
   hidden: { opacity: 0, transition: { duration: 0.2 } },
@@ -39,6 +96,16 @@ export default function Home() {
 
   const [showModalInstruction, setShowModalInstruction] = useState(false);
   const [showModalCredits, setShowModalCredits] = useState(false);
+
+  // Dictionary modal state
+  const [showDictionaryModal, setShowDictionaryModal] = useState(false);
+  const [dictionarySearchTerm, setDictionarySearchTerm] = useState("");
+  const [dictionaryData, setDictionaryData] = useState<KbbiApiResponse>({
+    status: "success",
+    data: [],
+  });
+  const [isLoadingDictionary, setIsLoadingDictionary] = useState(false);
+  const [isDirectWordLookup, setIsDirectWordLookup] = useState(false);
 
   const { screenWidth } = useContext(AppContext);
   const isDesktop = screenWidth > 1080;
@@ -103,6 +170,40 @@ export default function Home() {
 
     setIsRunning(true);
     setIsStop(false);
+  };
+
+  // Dictionary search function
+  const fetchDictionaryData = async (searchTerm: string) => {
+    if (!searchTerm.trim()) return;
+
+    setIsLoadingDictionary(true);
+    try {
+      const response = await fetch(
+        `https://api-esc.vloodplein.com/api/kbbi/search?keyword=${encodeURIComponent(
+          searchTerm
+        )}`
+      );
+      const data: KbbiApiResponse = await response.json();
+      setDictionaryData(data);
+    } catch (error) {
+      setDictionaryData({
+        status: "error",
+        data: [],
+        error: true,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch dictionary data",
+      });
+    } finally {
+      setIsLoadingDictionary(false);
+    }
+  };
+
+  const handleDictionarySearch = () => {
+    if (dictionarySearchTerm.trim()) {
+      fetchDictionaryData(dictionarySearchTerm.trim());
+    }
   };
 
   useEffect(() => {
@@ -227,6 +328,7 @@ export default function Home() {
                 </MenuItem>
               </MenuItems>
             </Menu>
+
             {/* <div className=""></div> */}
           </div>
         </div>
@@ -335,14 +437,20 @@ export default function Home() {
                   </button>
                 )}
               </div>
-              <a
-                href={
-                  language === "Indonesian"
-                    ? `https://kbbi.kemdikbud.go.id/entri/${wordContent}`
-                    : `https://www.oxfordlearnersdictionaries.com/definition/english/${wordContent}`
-                }
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => {
+                  if (language === "Indonesian") {
+                    setDictionarySearchTerm(wordContent);
+                    setIsDirectWordLookup(true);
+                    setShowDictionaryModal(true);
+                    fetchDictionaryData(wordContent);
+                  } else {
+                    window.open(
+                      `https://www.oxfordlearnersdictionaries.com/definition/english/${wordContent}`,
+                      "_blank"
+                    );
+                  }
+                }}
                 className="italic underline flex items-center"
               >
                 <div className="w-[24px] h-[24px] mr-2 flex text-[16px] justify-center items-center rounded-full bg-[#ffc778] dark:text-black">
@@ -360,7 +468,7 @@ export default function Home() {
                   )}
                 </div>
                 <GoArrowUpRight className="ml-1" />
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -611,6 +719,330 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                 <div className="w-full border-b-2 border-black border-dashed dark:border-white"></div>
                 <br />
                 {`Our website is proudly inspired by Pat Pattison's book "Writing Better Lyrics" and the site objectwriting.com, providing a platform for practicing creative writing.`}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Dictionary Modal */}
+        {showDictionaryModal && (
+          <motion.div
+            variants={varFadeInOutFullMobile}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="w-full p-4 h-screen fixed top-0 left-0 bg-[#000000b0] dark:bg-[#19191970] flex justify-center items-center z-50"
+          >
+            <div
+              className={`shadow-lg bg-[#fff0da] dark:bg-black dark:text-white rounded-xl dark:shadow-[#c2c2c240] ${
+                isDesktop ? "w-[800px] max-h-[90vh]" : "w-full max-h-[90vh]"
+              } flex flex-col`}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center">
+                  <div className="text-2xl mr-3">📖</div>
+                  <h2 className="text-xl font-bold">
+                    Kamus Besar Bahasa Indonesia
+                  </h2>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowDictionaryModal(false);
+                    setDictionaryData({ status: "success", data: [] });
+                    setDictionarySearchTerm("");
+                    setIsDirectWordLookup(false);
+                  }}
+                  className="text-2xl hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-2 transition-colors"
+                >
+                  <IoCloseOutline />
+                </button>
+              </div>
+
+              <div className="p-6  underline pb-2 border-black dark:border-white px-1 text-[28px] font-bold  w-full flex items-center justify-center text-center italic">
+                {dictionarySearchTerm}
+              </div>
+
+              {/* Search Input - Only show if not direct word lookup */}
+              {!isDirectWordLookup && (
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex gap-3">
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        value={dictionarySearchTerm}
+                        onChange={(e) =>
+                          setDictionarySearchTerm(e.target.value)
+                        }
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && handleDictionarySearch()
+                        }
+                        placeholder="Masukkan kata yang ingin dicari..."
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ffc778] focus:border-transparent"
+                      />
+                    </div>
+                    <button
+                      onClick={handleDictionarySearch}
+                      disabled={
+                        isLoadingDictionary || !dictionarySearchTerm.trim()
+                      }
+                      className="px-6 py-3 bg-[#ffc778] hover:bg-[#ffb84d] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                      <IoSearch className="text-lg" />
+                      {isLoadingDictionary ? "Mencari..." : "Cari"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Results */}
+              <div className="flex-1 overflow-hidden">
+                {isLoadingDictionary ? (
+                  <div className="flex items-center justify-center p-12">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffc778] mx-auto mb-4"></div>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Mencari kata dalam kamus...
+                      </p>
+                    </div>
+                  </div>
+                ) : dictionaryData.status === "error" ? (
+                  <div className="flex items-center justify-center p-12">
+                    <div className="text-center">
+                      <p className="text-red-600 dark:text-red-400 mb-2">
+                        Terjadi kesalahan
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {dictionaryData.message}
+                      </p>
+                    </div>
+                  </div>
+                ) : dictionaryData.data.length === 0 ? (
+                  <div className="flex items-center justify-center p-12">
+                    <div className="text-center">
+                      <p className="text-gray-600 dark:text-gray-400 mb-2">
+                        {dictionarySearchTerm
+                          ? "Kata tidak ditemukan"
+                          : "Masukkan kata untuk mencari"}
+                      </p>
+                      {dictionarySearchTerm && (
+                        <p className="text-sm text-gray-500 dark:text-gray-500">
+                          Coba gunakan kata lain atau periksa ejaan
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col h-full">
+                    <div className="flex-1 p-6 overflow-y-auto">
+                      {dictionaryData.data.map((entry, index) => (
+                        <div
+                          key={entry.id}
+                          className="mb-8 border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
+                        >
+                          {/* Main Word */}
+                          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                            {entry.lema}
+                          </h2>
+
+                          {/* Additional Info */}
+                          <div className="space-y-2 mb-4 text-sm">
+                            {entry.kata_dasar &&
+                              parseJsonArray(entry.kata_dasar).length > 0 && (
+                                <div>
+                                  <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                    Kata Dasar:{" "}
+                                  </span>
+                                  <span className="text-gray-600 dark:text-gray-400">
+                                    {parseJsonArray(entry.kata_dasar).join(
+                                      ", "
+                                    )}
+                                  </span>
+                                </div>
+                              )}
+
+                            {entry.bentuk_tidak_baku &&
+                              parseJsonArray(entry.bentuk_tidak_baku).length >
+                                0 && (
+                                <div>
+                                  <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                    Bentuk Tidak Baku:{" "}
+                                  </span>
+                                  <span className="text-gray-600 dark:text-gray-400">
+                                    {parseJsonArray(
+                                      entry.bentuk_tidak_baku
+                                    ).join(", ")}
+                                  </span>
+                                </div>
+                              )}
+
+                            {entry.varian &&
+                              parseJsonArray(entry.varian).length > 0 && (
+                                <div>
+                                  <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                    Varian:{" "}
+                                  </span>
+                                  <span className="text-gray-600 dark:text-gray-400">
+                                    {parseJsonArray(entry.varian).join(", ")}
+                                  </span>
+                                </div>
+                              )}
+
+                            {entry.etimologi && (
+                              <div>
+                                <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                  Etimologi:{" "}
+                                </span>
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  {entry.etimologi}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Meanings */}
+                          <div className="space-y-4">
+                            <h3 className="font-semibold text-lg text-gray-800 dark:text-gray-200">
+                              Arti:
+                            </h3>
+                            {entry.meanings.map((meaning, meaningIndex) => (
+                              <div
+                                key={meaning.id}
+                                className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4"
+                              >
+                                {/* Word Class */}
+                                {meaning.kelas &&
+                                  parseJsonArray(meaning.kelas).length > 0 && (
+                                    <div className="mb-2">
+                                      {parseJsonArray(meaning.kelas).map(
+                                        (kelas, kelasIndex) => (
+                                          <span
+                                            key={kelasIndex}
+                                            className="inline-block bg-[#ffc778] text-black text-xs px-2 py-1 rounded-full mr-2 font-medium"
+                                          >
+                                            {typeof kelas === "string"
+                                              ? kelas
+                                              : `${kelas.nama} (${kelas.kode})`}
+                                          </span>
+                                        )
+                                      )}
+                                    </div>
+                                  )}
+
+                                {/* Definition */}
+                                <div className="mb-3">
+                                  <span className="text-gray-900 dark:text-gray-100">
+                                    {meaningIndex + 1}.{" "}
+                                  </span>
+                                  <span className="text-gray-800 dark:text-gray-200">
+                                    {Array.isArray(meaning.submakna)
+                                      ? meaning.submakna.join(", ")
+                                      : meaning.submakna}
+                                  </span>
+                                  {meaning.info && (
+                                    <span className="text-gray-600 dark:text-gray-400 italic ml-2">
+                                      ({meaning.info})
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Examples */}
+                                {meaning.contoh &&
+                                  parseJsonArray(meaning.contoh).length > 0 && (
+                                    <div className="mt-3">
+                                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                        Contoh:
+                                      </span>
+                                      <div className="mt-1 space-y-1">
+                                        {parseJsonArray(meaning.contoh).map(
+                                          (example, exampleIndex) => (
+                                            <div
+                                              key={exampleIndex}
+                                              className="text-sm text-gray-600 dark:text-gray-400 italic"
+                                            >
+                                              • {example}
+                                            </div>
+                                          )
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Additional Sections */}
+                          {((entry.kata_turunan &&
+                            parseJsonArray(entry.kata_turunan).length > 0) ||
+                            (entry.gabungan_kata &&
+                              parseJsonArray(entry.gabungan_kata).length > 0) ||
+                            (entry.peribahasa &&
+                              parseJsonArray(entry.peribahasa).length > 0) ||
+                            (entry.idiom &&
+                              parseJsonArray(entry.idiom).length > 0)) && (
+                            <div className="mt-6 space-y-3 text-sm">
+                              {entry.kata_turunan &&
+                                parseJsonArray(entry.kata_turunan).length >
+                                  0 && (
+                                  <div>
+                                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                      Kata Turunan:{" "}
+                                    </span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      {parseJsonArray(entry.kata_turunan).join(
+                                        ", "
+                                      )}
+                                    </span>
+                                  </div>
+                                )}
+
+                              {entry.gabungan_kata &&
+                                parseJsonArray(entry.gabungan_kata).length >
+                                  0 && (
+                                  <div>
+                                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                      Gabungan Kata:{" "}
+                                    </span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      {parseJsonArray(entry.gabungan_kata).join(
+                                        ", "
+                                      )}
+                                    </span>
+                                  </div>
+                                )}
+
+                              {entry.peribahasa &&
+                                parseJsonArray(entry.peribahasa).length > 0 && (
+                                  <div>
+                                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                      Peribahasa:{" "}
+                                    </span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      {parseJsonArray(entry.peribahasa).join(
+                                        ", "
+                                      )}
+                                    </span>
+                                  </div>
+                                )}
+
+                              {entry.idiom &&
+                                parseJsonArray(entry.idiom).length > 0 && (
+                                  <div>
+                                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                                      Idiom:{" "}
+                                    </span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                      {parseJsonArray(entry.idiom).join(", ")}
+                                    </span>
+                                  </div>
+                                )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { AppContext } from "./_lib/Context/appContext";
 import Image from "next/image";
 import { HeaderMobile } from "./_lib/Header/mobile";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 const varFadeInOut = {
   hidden: { opacity: 1 },

@@ -4,7 +4,7 @@ import ThemeSwitch from "../Components/ThemeSwitch";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { FaInstagram } from "react-icons/fa";
 import { PiLinktreeLogoBold } from "react-icons/pi";
 
@@ -48,7 +48,6 @@ export const HeaderMobile = () => {
             width={60}
             height={60}
             className="dark:invert"
-            priority
           />
         </Link>
 

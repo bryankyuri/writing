@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ThemeSwitch from "../Components/ThemeSwitch";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaInstagram } from "react-icons/fa";
@@ -45,7 +45,6 @@ export const Header = () => {
             width={100}
             height={100}
             className="dark:invert"
-            priority
           />
         </Link>
         <div className="flex items-center">
