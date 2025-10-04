@@ -71,6 +71,34 @@ const parseJsonArray = (field: string | string[]): string[] => {
   return [];
 };
 
+// Helper function to safely parse kelas field
+const parseKelasArray = (
+  field:
+    | string
+    | Array<{
+        kode: string;
+        nama: string;
+        deskripsi: string;
+      }>
+): Array<{
+  kode: string;
+  nama: string;
+  deskripsi: string;
+}> => {
+  if (Array.isArray(field)) {
+    return field;
+  }
+  if (typeof field === "string") {
+    try {
+      const parsed = JSON.parse(field);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 const varFadeInOutFullMobile = {
   hidden: { opacity: 0, transition: { duration: 0.2 } },
   visible: { opacity: 1, transition: { duration: 0.2 } },
@@ -912,9 +940,9 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                               >
                                 {/* Word Class */}
                                 {meaning.kelas &&
-                                  parseJsonArray(meaning.kelas).length > 0 && (
+                                  parseKelasArray(meaning.kelas).length > 0 && (
                                     <div className="mb-2">
-                                      {parseJsonArray(meaning.kelas).map(
+                                      {parseKelasArray(meaning.kelas).map(
                                         (kelas, kelasIndex) => (
                                           <span
                                             key={kelasIndex}
