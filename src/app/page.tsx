@@ -258,6 +258,24 @@ export default function Home() {
     }
   }, [duration, isRunning]);
 
+  // Manage body overflow when modals are open
+  useEffect(() => {
+    const isAnyModalOpen = showDictionaryModal || showModalInstruction || showModalCredits;
+    
+    if (isAnyModalOpen) {
+      // Hide body overflow when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore body overflow when modal is closed
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showDictionaryModal, showModalInstruction, showModalCredits]);
+
   const wordContent =
     type === 1
       ? language === "Indonesian"
@@ -759,15 +777,28 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="w-full p-4 h-screen fixed top-0 left-0 bg-[#000000b0] dark:bg-[#19191970] flex justify-center items-center z-50"
+            className="w-full p-4 h-screen fixed top-0 left-0 bg-[#000000b0] dark:bg-[#19191970] flex justify-center items-center z-50 overflow-hidden"
+            onClick={(e) => {
+              // Close modal if clicking on backdrop
+              if (e.target === e.currentTarget) {
+                setShowDictionaryModal(false);
+                setDictionaryData({ status: "success", data: [] });
+                setDictionarySearchTerm("");
+                setIsDirectWordLookup(false);
+              }
+            }}
           >
             <div
               className={`shadow-lg bg-[#fff0da] dark:bg-black dark:text-white rounded-xl dark:shadow-[#c2c2c240] ${
                 isDesktop ? "w-[800px] max-h-[90vh]" : "w-full max-h-[90vh]"
-              } flex flex-col`}
+              } flex flex-col overflow-hidden`}
+              onClick={(e) => {
+                // Prevent modal close when clicking inside the modal content
+                e.stopPropagation();
+              }}
             >
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              {/* Header - Fixed at top */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <div className="flex items-center">
                   <div className="text-2xl mr-3">📖</div>
                   <h2 className="text-xl font-bold">
@@ -787,13 +818,14 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                 </button>
               </div>
 
-              <div className="p-6  underline pb-2 border-black dark:border-white px-1 text-[28px] font-bold  w-full flex items-center justify-center text-center italic">
+              {/* Search Term Display - Fixed */}
+              <div className="p-6 underline border-black dark:border-white px-1 text-[28px] font-bold w-full flex items-center justify-center text-center italic flex-shrink-0">
                 {dictionarySearchTerm}
               </div>
 
-              {/* Search Input - Only show if not direct word lookup */}
+              {/* Search Input - Fixed (only show if not direct word lookup) */}
               {!isDirectWordLookup && (
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                   <div className="flex gap-3">
                     <div className="flex-1 relative">
                       <input
@@ -823,8 +855,8 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                 </div>
               )}
 
-              {/* Results */}
-              <div className="flex-1 overflow-hidden">
+              {/* Scrollable Content Area */}
+              <div className="flex-1 overflow-y-auto">
                 {isLoadingDictionary ? (
                   <div className="flex items-center justify-center p-12">
                     <div className="text-center">
@@ -861,9 +893,8 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col h-full">
-                    <div className="flex-1 p-6 overflow-y-auto">
-                      {dictionaryData.data.map((entry, index) => (
+                  <div className="p-6">
+                    {dictionaryData.data.map((entry, index) => (
                         <div
                           key={entry.id}
                           className="mb-8 border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
@@ -958,7 +989,7 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                                   )}
 
                                 {/* Definition */}
-                                <div className="mb-3">
+                                <div className="mb-3 text-sm">
                                   <span className="text-gray-900 dark:text-gray-100">
                                     {meaningIndex + 1}.{" "}
                                   </span>
@@ -978,7 +1009,7 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                                 {meaning.contoh &&
                                   parseJsonArray(meaning.contoh).length > 0 && (
                                     <div className="mt-3">
-                                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                      <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                                         Contoh:
                                       </span>
                                       <div className="mt-1 space-y-1">
@@ -1068,7 +1099,6 @@ ditambah dengan indra organik (kesadaran tubuh Anda) dan indra kinestetik
                           )}
                         </div>
                       ))}
-                    </div>
                   </div>
                 )}
               </div>
